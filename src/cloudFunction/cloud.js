@@ -1,7 +1,7 @@
 const queryJSON = require('../backgroundTasks/queryInventory');
 const av = require('leanengine');
 
-av.Cloud.define('hello', async (request, response) => {
+av.Cloud.define('inventory', async (request, response) => {
   // 请求库存
   const inventory = await queryJSON(request.params)
 
