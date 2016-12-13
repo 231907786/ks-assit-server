@@ -5,7 +5,10 @@ const sites = require('./sites');
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-const queryInventoryHTML = async () => {
+const queryInventoryHTML = async (retry = 0) => {
+
+  // 递归重试上限5次
+  if (retry > 3) return retry
 
   const {text} = await request
     .post(sites.root + sites.inventory)
@@ -17,7 +20,7 @@ const queryInventoryHTML = async () => {
   const str = $.html()
   if (str.length < 1e5) {
     await delay(1e3)
-    return await queryInventoryHTML()
+    return await queryInventoryHTML(retry + 1)
   }else {
     return $
   }
@@ -74,12 +77,13 @@ const extractData = $ => {
           quantity: arr[4]
         }
       default:
-        console.log('Function getPriceAndNum got unconsidered case: length = ' + arr.length)
+        console.error(`Function getPriceAndNum got unconsidered case: length = ${arr.length}`);
     }
   }
 }
 
 module.exports = async () => {
   const $ = await queryInventoryHTML()
-  return extractData($)
+  if ($) return extractData($)
+  else throw new Error('inventory_2')
 }

@@ -1,6 +1,7 @@
 const cookie = require('./cookie');
 const sites = require('./sites');
 const request = require('superagent');
+const fs = require('fs');
 
 module.exports = async function(auth) {
   await cookie.init()
@@ -13,4 +14,7 @@ module.exports = async function(auth) {
       password: auth[1],
       Submit: '登入',
     })
+  if (/default\.asp/.test(response.request.url)) {
+    throw new Error('inventory_1')
+  }
 }
