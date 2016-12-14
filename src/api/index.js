@@ -1,7 +1,7 @@
 var router = require('express').Router()
 var av = require('leanengine')
 
-router.get('/inventory', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const result = await av.Cloud.run('inventory', {username: req.query.a, password: req.query.b})
     res.end(JSON.stringify(result))

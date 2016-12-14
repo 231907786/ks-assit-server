@@ -3,10 +3,13 @@ const av = require('leanengine');
 const getPriceList = require('./helper/priceList');
 const errorMap = require('../errorMap');
 
-av.Cloud.define('inventory', async (request, response) => {
+
+const Log = av.Object.extend('LogRequest')
+
+av.Cloud.define('inventory', async (req, res) => {
   try {
     // 请求库存
-    const inventory = await queryJSON(request.params)
+    const inventory = await queryJSON(req.params)
 
     // 拿到缓存的价目表
     const priceList = await getPriceList()
@@ -35,11 +38,26 @@ av.Cloud.define('inventory', async (request, response) => {
       100: {money: 0, pv: 0},
       70: {money: 0, pv: 0},
     })
-    response.success(sum)
+    res.success(sum)
+
+    // 记录访问日志
+    const log = new Log()
+    log
+      .set('ip', req.meta.remoteAddress)
+      .set('result', 'success')
+      .save()
+
   } catch (err) {
     // 错误由云函数统一收集发送
     const message = errorMap[err.message] || '未知错误，请稍候再试'
-    response.error({message})
+    res.error({message})
+
+    // 记录错误日志
+    const log = new Log()
+    log
+      .set('ip', req.meta.remoteAddress)
+      .set('result', err.message)
+      .save()
   }
 });
 
