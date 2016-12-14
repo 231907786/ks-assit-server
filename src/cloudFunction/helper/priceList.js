@@ -7,6 +7,7 @@ let priceList = {}
 
 const updatePriceList = async() => {
   const queryProductPrice = new av.Query('ProductPrice')
+  queryProductPrice.select(['100', '70', 'product_id'])
   queryProductPrice.limit(1000)
   priceList = await queryProductPrice.find()
   priceList = priceList.reduce((acc, obj) => {
