@@ -4,7 +4,7 @@ const getPriceList = require('./helper/priceList');
 const errorMap = require('../errorMap');
 
 
-const Log = av.Object.extend('LogRequest')
+// const Log = av.Object.extend('LogRequest')
 
 av.Cloud.define('inventory', async (req, res) => {
   try {
@@ -41,11 +41,11 @@ av.Cloud.define('inventory', async (req, res) => {
     res.success(sum)
 
     // 记录访问日志
-    const log = new Log()
-    log
-      .set('ip', req.meta.remoteAddress)
-      .set('result', 'success')
-      .save()
+    // const log = new Log()
+    // log
+    //   .set('ip', req.meta.remoteAddress)
+    //   .set('result', 'success')
+    //   .save()
 
   } catch (err) {
     // 错误由云函数统一收集发送
@@ -53,12 +53,17 @@ av.Cloud.define('inventory', async (req, res) => {
     res.error({message})
 
     // 记录错误日志
-    const log = new Log()
-    log
-      .set('ip', req.meta.remoteAddress)
-      .set('result', err.message)
-      .save()
+    // const log = new Log()
+    // log
+    //   .set('ip', req.meta.remoteAddress)
+    //   .set('result', err.message)
+    //   .save()
   }
 });
+
+
+av.Cloud.define('hello', async (req, res) => {
+  res.success(JSON.stringify(req.params))
+})
 
 module.exports = av.Cloud;
